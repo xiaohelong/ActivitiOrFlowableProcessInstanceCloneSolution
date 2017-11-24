@@ -1,8 +1,8 @@
 # ActivitiOrFlowableProcessInstanceCloneSolution
 # Activiti Flowable 流程引擎的运行时流程实例克隆解决方案
-Activiti(Flowable)Process Clone Solution(English Version)
+1. Activiti(Flowable)Process Clone Solution(English Version)
     wait for me to translate
-Activiti(Flowable)流程克隆（运行时实例克隆）解决方案(Chinese Version)
+2. Activiti(Flowable)流程克隆（运行时实例克隆）解决方案(Chinese Version)
 一种订单制造中分裂与合并的核心技术实践
 作者：长沙大东家 xiaohelong2005@126.com 2017-11-24 20:24 长沙
 1.	背景
