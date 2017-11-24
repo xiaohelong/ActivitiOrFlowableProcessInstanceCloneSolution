@@ -137,16 +137,6 @@ public class ActCloneService extends BaseService {
 
     /**
      * 核心思路：将此流程实例相关的的所有信息进行收集，再利用全文替换的思想，将相关联的ID号统一替换成新的ID号，这样就可以保证复制的流程关系一模一样。
-     * 要保存记录成功，必须要移除掉所有的外键(主要是act_ru_)
-     * 具体步骤如下：
-     * //step1 begin:get all record
-     * //step1 end:get all record
-     * //step2 begin:read all data id to a set(some fields just like proc_def_id_ need to be excluded
-     * //step2 end:read all data id to a set(some fields just like proc_def_id_ need to be excluded
-     * //step3 begin:set all got data to isnewrecord and replace old id with it's related new id
-     * //step3 end:set all got data to isnewrecord and replace old id with it's related new id
-     * //step4 begin:save to database,and return
-     * //step4 end:save to database,and return
      * 这里主要全文替换是ID，且是几个特有的字段。
      *
      * @param procInstanceID 需要克隆的实例流程
@@ -211,8 +201,7 @@ public class ActCloneService extends BaseService {
             actHiDetailService.saveBatch(actHiDetails);
         }
         //5. act_hi_identitylink table
-        //身份关链表（有为空的，也有不为空的，需要进行特殊处理即找出所有流程相关的任务或者流程本身再去重）
-        //可以先通过taskinst找到所有任务，再进行直接通过ProcInstId找出的记录，去重即可。
+        //身份关链表（有为空的，也有不为空的，需要进行特殊处理即找出所有流程相关的任务或者流程本身）
         ActHiIdentitylink actHiIdentitylinkFindEntity = new ActHiIdentitylink();
         actHiIdentitylinkFindEntity.setProcInstId(procInstanceID);
         List<ActHiIdentitylink> actHiIdentitylinks = actHiIdentitylinkService.findAllIdentitylinkByProcInstId(actHiIdentitylinkFindEntity);
@@ -349,6 +338,6 @@ public class ActCloneService extends BaseService {
         idSet.put(procInstId,subIdSet);
         subIdSet.put(procInstId,IdGen.uuid());//initialize
         excludeFieldsSet.add("getProcDefId");
-        excludeFieldsSet.add("bytearrayId");
+        excludeFieldsSet.add("getBytearrayId");
     }
 }
