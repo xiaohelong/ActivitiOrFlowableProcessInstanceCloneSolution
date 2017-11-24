@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.act.dao.engine.ActHiVarinstDao">
+    
+	<sql id="actHiVarinstColumns">
+		a.id_ AS "id",
+		a.proc_inst_id_ AS "procInstId",
+		a.execution_id_ AS "executionId",
+		a.task_id_ AS "taskId",
+		a.name_ AS "name",
+		a.var_type_ AS "varType",
+		a.rev_ AS "rev",
+		a.bytearray_id_ AS "bytearrayId",
+		a.double_ AS "double_",
+		a.long_ AS "long_",
+		a.text_ AS "text",
+		a.text2_ AS "text2",
+		a.create_time_ AS "createTime",
+		a.last_updated_time_ AS "lastUpdatedTime"
+	</sql>
+	
+	<sql id="actHiVarinstJoins">
+	</sql>
+    
+	<select id="get" resultType="ActHiVarinst">
+		SELECT 
+			<include refid="actHiVarinstColumns"/>
+		FROM act_hi_varinst a
+		<include refid="actHiVarinstJoins"/>
+		WHERE a.id_ = #{id}
+	</select>
+	
+	<select id="findList" resultType="ActHiVarinst">
+		SELECT 
+			<include refid="actHiVarinstColumns"/>
+		FROM act_hi_varinst a
+		<include refid="actHiVarinstJoins"/>
+		<where>
+			<if test="procInstId != null">
+				a.proc_inst_id_=#{procInstId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ActHiVarinst">
+		SELECT 
+			<include refid="actHiVarinstColumns"/>
+		FROM act_hi_varinst a
+		<include refid="actHiVarinstJoins"/>
+		<where>
+			<if test="procInstId != null">
+				a.proc_inst_id_=#{procInstId}
+			</if>
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO act_hi_varinst(
+			id_,
+			proc_inst_id_,
+			execution_id_,
+			task_id_,
+			name_,
+			var_type_,
+			rev_,
+			bytearray_id_,
+			double_,
+			long_,
+			text_,
+			text2_,
+			create_time_,
+			last_updated_time_
+		) VALUES (
+			#{id},
+			#{procInstId},
+			#{executionId},
+			#{taskId},
+			#{name},
+			#{varType},
+			#{rev},
+			#{bytearrayId},
+			#{double_},
+			#{long_},
+			#{text},
+			#{text2},
+			#{createTime},
+			#{lastUpdatedTime}
+		)
+	</insert>
+	<insert id="saveBatch">
+		INSERT INTO act_hi_varinst(
+		id_,
+		proc_inst_id_,
+		execution_id_,
+		task_id_,
+		name_,
+		var_type_,
+		rev_,
+		bytearray_id_,
+		double_,
+		long_,
+		text_,
+		text2_,
+		create_time_,
+		last_updated_time_
+		) VALUES
+		<foreach item="item" index="index" collection="list" separator=",">
+		(
+		#{item.id},
+		#{item.procInstId},
+		#{item.executionId},
+		#{item.taskId},
+		#{item.name},
+		#{item.varType},
+		#{item.rev},
+		#{item.bytearrayId},
+		#{item.double_},
+		#{item.long_},
+		#{item.text},
+		#{item.text2},
+		#{item.createTime},
+		#{item.lastUpdatedTime}
+		)
+		</foreach>
+	</insert>
+	<update id="update">
+		UPDATE act_hi_varinst SET 	
+			id_ = #{id},
+			proc_inst_id_ = #{procInstId},
+			execution_id_ = #{executionId},
+			task_id_ = #{taskId},
+			name_ = #{name},
+			var_type_ = #{varType},
+			rev_ = #{rev},
+			bytearray_id_ = #{bytearrayId},
+			double_ = #{double_},
+			long_ = #{long_},
+			text_ = #{text},
+			text2_ = #{text2},
+			create_time_ = #{createTime},
+			last_updated_time_ = #{lastUpdatedTime}
+		WHERE id_ = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM act_hi_varinst
+		WHERE id_ = #{id}
+	</update>
+	
+</mapper>

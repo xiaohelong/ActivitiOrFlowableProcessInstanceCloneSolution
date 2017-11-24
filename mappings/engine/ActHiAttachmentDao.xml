@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.act.dao.engine.ActHiAttachmentDao">
+    
+	<sql id="actHiAttachmentColumns">
+		a.id_ AS "id",
+		a.rev_ AS "rev",
+		a.user_id_ AS "user.id",
+		a.name_ AS "name",
+		a.description_ AS "description",
+		a.type_ AS "type",
+		a.task_id_ AS "taskId",
+		a.proc_inst_id_ AS "procInstId",
+		a.url_ AS "url",
+		a.content_id_ AS "contentId",
+		a.time_ AS "time",
+		u3.name AS "user.name"
+	</sql>
+	
+	<sql id="actHiAttachmentJoins">
+		LEFT JOIN sys_user u3 ON u3.id = a.user_id_
+	</sql>
+    
+	<select id="get" resultType="ActHiAttachment">
+		SELECT 
+			<include refid="actHiAttachmentColumns"/>
+		FROM act_hi_attachment a
+		<include refid="actHiAttachmentJoins"/>
+		WHERE a.id_ = #{id}
+	</select>
+	
+	<select id="findList" resultType="ActHiAttachment">
+		SELECT 
+			<include refid="actHiAttachmentColumns"/>
+		FROM act_hi_attachment a
+		<include refid="actHiAttachmentJoins"/>
+		<where>
+			<if test="procInstId != null">
+				a.proc_inst_id_=#{procInstId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ActHiAttachment">
+		SELECT 
+			<include refid="actHiAttachmentColumns"/>
+		FROM act_hi_attachment a
+		<include refid="actHiAttachmentJoins"/>
+		<where>
+			<if test="procInstId != null">
+				a.proc_inst_id_=#{procInstId}
+			</if>
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO act_hi_attachment(
+			id_,
+			rev_,
+			user_id_,
+			name_,
+			description_,
+			type_,
+			task_id_,
+			proc_inst_id_,
+			url_,
+			content_id_,
+			time_
+		) VALUES (
+			#{id},
+			#{rev},
+			#{user.id},
+			#{name},
+			#{description},
+			#{type},
+			#{taskId},
+			#{procInstId},
+			#{url},
+			#{contentId},
+			#{time}
+		)
+	</insert>
+	<insert id="saveBatch">
+		INSERT INTO act_hi_attachment(
+		id_,
+		rev_,
+		user_id_,
+		name_,
+		description_,
+		type_,
+		task_id_,
+		proc_inst_id_,
+		url_,
+		content_id_,
+		time_
+		) VALUES
+		<foreach item="item" index="index" collection="list" separator=",">
+		(
+		#{item.id},
+		#{item.rev},
+		#{item.user.id},
+		#{item.name},
+		#{item.description},
+		#{item.type},
+		#{item.taskId},
+		#{item.procInstId},
+		#{item.url},
+		#{item.contentId},
+		#{item.time}
+		)
+		</foreach>
+	</insert>
+	<update id="update">
+		UPDATE act_hi_attachment SET 	
+			id_ = #{id},
+			rev_ = #{rev},
+			user_id_ = #{user.id},
+			name_ = #{name},
+			description_ = #{description},
+			type_ = #{type},
+			task_id_ = #{taskId},
+			proc_inst_id_ = #{procInstId},
+			url_ = #{url},
+			content_id_ = #{contentId},
+			time_ = #{time}
+		WHERE id_ = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM act_hi_attachment
+		WHERE id_ = #{id}
+	</update>
+	
+</mapper>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.act.dao.engine.ActRuEventSubscrDao">
+    
+	<sql id="actRuEventSubscrColumns">
+		a.id_ AS "id",
+		a.rev_ AS "rev",
+		a.event_type_ AS "eventType",
+		a.event_name_ AS "eventName",
+		a.execution_id_ AS "executionId",
+		a.proc_inst_id_ AS "procInstId",
+		a.activity_id_ AS "activityId",
+		a.configuration_ AS "configuration",
+		a.created_ AS "created",
+		a.proc_def_id_ AS "procDefId",
+		a.tenant_id_ AS "tenantId"
+	</sql>
+	
+	<sql id="actRuEventSubscrJoins">
+	</sql>
+    
+	<select id="get" resultType="ActRuEventSubscr">
+		SELECT 
+			<include refid="actRuEventSubscrColumns"/>
+		FROM act_ru_event_subscr a
+		<include refid="actRuEventSubscrJoins"/>
+		WHERE a.id_ = #{id}
+	</select>
+	
+	<select id="findList" resultType="ActRuEventSubscr">
+		SELECT 
+			<include refid="actRuEventSubscrColumns"/>
+		FROM act_ru_event_subscr a
+		<include refid="actRuEventSubscrJoins"/>
+		<where>
+			<if test="procInstId != null">
+				a.proc_inst_id_=#{procInstId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ActRuEventSubscr">
+		SELECT 
+			<include refid="actRuEventSubscrColumns"/>
+		FROM act_ru_event_subscr a
+		<include refid="actRuEventSubscrJoins"/>
+		<where>
+			<if test="procInstId != null">
+				a.proc_inst_id_=#{procInstId}
+			</if>
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO act_ru_event_subscr(
+			id_,
+			rev_,
+			event_type_,
+			event_name_,
+			execution_id_,
+			proc_inst_id_,
+			activity_id_,
+			configuration_,
+			created_,
+			proc_def_id_,
+			tenant_id_
+		) VALUES (
+			#{id},
+			#{rev},
+			#{eventType},
+			#{eventName},
+			#{executionId},
+			#{procInstId},
+			#{activityId},
+			#{configuration},
+			#{created},
+			#{procDefId},
+			#{tenantId}
+		)
+	</insert>
+	<insert id="saveBatch">
+		set FOREIGN_KEY_CHECKS=0;
+		INSERT INTO act_ru_event_subscr(
+		id_,
+		rev_,
+		event_type_,
+		event_name_,
+		execution_id_,
+		proc_inst_id_,
+		activity_id_,
+		configuration_,
+		created_,
+		proc_def_id_,
+		tenant_id_
+		) VALUES
+		<foreach item="item" index="index" collection="list" separator=",">
+		 (
+		#{item.id},
+		#{item.rev},
+		#{item.eventType},
+		#{item.eventName},
+		#{item.executionId},
+		#{item.procInstId},
+		#{item.activityId},
+		#{item.configuration},
+		#{item.created},
+		#{item.procDefId},
+		#{item.tenantId}
+		)
+		</foreach>;
+		set FOREIGN_KEY_CHECKS=1;
+	</insert>
+	<update id="update">
+		UPDATE act_ru_event_subscr SET 	
+			id_ = #{id},
+			rev_ = #{rev},
+			event_type_ = #{eventType},
+			event_name_ = #{eventName},
+			execution_id_ = #{executionId},
+			proc_inst_id_ = #{procInstId},
+			activity_id_ = #{activityId},
+			configuration_ = #{configuration},
+			created_ = #{created},
+			proc_def_id_ = #{procDefId},
+			tenant_id_ = #{tenantId}
+		WHERE id_ = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM act_ru_event_subscr
+		WHERE id_ = #{id}
+	</update>
+	
+</mapper>

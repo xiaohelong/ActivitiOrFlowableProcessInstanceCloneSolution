@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.act.dao.engine.ActRuTaskDao">
+    
+	<sql id="actRuTaskColumns">
+		a.id_ AS "id",
+		a.rev_ AS "rev",
+		a.execution_id_ AS "executionId",
+		a.proc_inst_id_ AS "procInstId",
+		a.proc_def_id_ AS "procDefId",
+		a.name_ AS "name",
+		a.parent_task_id_ AS "parentTaskId",
+		a.description_ AS "description",
+		a.task_def_key_ AS "taskDefKey",
+		a.owner_ AS "owner",
+		a.assignee_ AS "assignee",
+		a.delegation_ AS "delegation",
+		a.priority_ AS "priority",
+		a.create_time_ AS "createTime",
+		a.due_date_ AS "dueDate",
+		a.category_ AS "category",
+		a.suspension_state_ AS "suspensionState",
+		a.tenant_id_ AS "tenantId",
+		a.form_key_ AS "formKey"
+	</sql>
+	
+	<sql id="actRuTaskJoins">
+	</sql>
+    
+	<select id="get" resultType="ActRuTask">
+		SELECT 
+			<include refid="actRuTaskColumns"/>
+		FROM act_ru_task a
+		<include refid="actRuTaskJoins"/>
+		WHERE a.id_ = #{id}
+	</select>
+	
+	<select id="findList" resultType="ActRuTask">
+		SELECT 
+			<include refid="actRuTaskColumns"/>
+		FROM act_ru_task a
+		<include refid="actRuTaskJoins"/>
+		<where>
+			a.execution_id_=#{id}
+			and
+			a.proc_inst_id_=#{procInstId}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ActRuTask">
+		SELECT 
+			<include refid="actRuTaskColumns"/>
+		FROM act_ru_task a
+		<include refid="actRuTaskJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO act_ru_task(
+			id_,
+			rev_,
+			execution_id_,
+			proc_inst_id_,
+			proc_def_id_,
+			name_,
+			parent_task_id_,
+			description_,
+			task_def_key_,
+			owner_,
+			assignee_,
+			delegation_,
+			priority_,
+			create_time_,
+			due_date_,
+			category_,
+			suspension_state_,
+			tenant_id_,
+			form_key_
+		) VALUES (
+			#{id},
+			#{rev},
+			#{executionId},
+			#{procInstId},
+			#{procDefId},
+			#{name},
+			#{parentTaskId},
+			#{description},
+			#{taskDefKey},
+			#{owner},
+			#{assignee},
+			#{delegation},
+			#{priority},
+			#{createTime},
+			#{dueDate},
+			#{category},
+			#{suspensionState},
+			#{tenantId},
+			#{formKey}
+		)
+	</insert>
+	<insert id="saveBatch">
+		set FOREIGN_KEY_CHECKS=0;
+		INSERT INTO act_ru_task(
+		id_,
+		rev_,
+		execution_id_,
+		proc_inst_id_,
+		proc_def_id_,
+		name_,
+		parent_task_id_,
+		description_,
+		task_def_key_,
+		owner_,
+		assignee_,
+		delegation_,
+		priority_,
+		create_time_,
+		due_date_,
+		category_,
+		suspension_state_,
+		tenant_id_,
+		form_key_
+		) VALUES
+		<foreach item="item" index="index" collection="list" separator=",">
+		 (
+		#{item.id},
+		#{item.rev},
+		#{item.executionId},
+		#{item.procInstId},
+		#{item.procDefId},
+		#{item.name},
+		#{item.parentTaskId},
+		#{item.description},
+		#{item.taskDefKey},
+		#{item.owner},
+		#{item.assignee},
+		#{item.delegation},
+		#{item.priority},
+		#{item.createTime},
+		#{item.dueDate},
+		#{item.category},
+		#{item.suspensionState},
+		#{item.tenantId},
+		#{item.formKey}
+		)
+		</foreach>;
+		set FOREIGN_KEY_CHECKS=1;
+	</insert>
+
+	<update id="update">
+		UPDATE act_ru_task SET 	
+			id_ = #{id},
+			rev_ = #{rev},
+			execution_id_ = #{executionId},
+			proc_inst_id_ = #{procInstId},
+			proc_def_id_ = #{procDefId},
+			name_ = #{name},
+			parent_task_id_ = #{parentTaskId},
+			description_ = #{description},
+			task_def_key_ = #{taskDefKey},
+			owner_ = #{owner},
+			assignee_ = #{assignee},
+			delegation_ = #{delegation},
+			priority_ = #{priority},
+			create_time_ = #{createTime},
+			due_date_ = #{dueDate},
+			category_ = #{category},
+			suspension_state_ = #{suspensionState},
+			tenant_id_ = #{tenantId},
+			form_key_ = #{formKey}
+		WHERE id_ = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM act_ru_task
+		WHERE id_ = #{id}
+	</update>
+	
+</mapper>

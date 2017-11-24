@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.act.dao.engine.ActRuExecutionDao">
+    
+	<sql id="actRuExecutionColumns">
+		a.id_ AS "id",
+		a.rev_ AS "rev",
+		a.proc_inst_id_ AS "procInstId",
+		a.business_key_ AS "businessKey",
+		a.parent_id_ AS "parentId",
+		a.proc_def_id_ AS "procDefId",
+		a.super_exec_ AS "superExec",
+		a.act_id_ AS "actId",
+		a.is_active_ AS "isActive",
+		a.is_concurrent_ AS "isConcurrent",
+		a.is_scope_ AS "isScope",
+		a.is_event_scope_ AS "isEventScope",
+		a.suspension_state_ AS "suspensionState",
+		a.cached_ent_state_ AS "cachedEntState",
+		a.tenant_id_ AS "tenantId",
+		a.name_ AS "name",
+		a.lock_time_ AS "lockTime"
+	</sql>
+	
+	<sql id="actRuExecutionJoins">
+	</sql>
+    
+	<select id="get" resultType="ActRuExecution">
+		SELECT 
+			<include refid="actRuExecutionColumns"/>
+		FROM act_ru_execution a
+		<include refid="actRuExecutionJoins"/>
+		WHERE a.id_ = #{id}
+	</select>
+
+	<select id="findChildInRunning" resultType="ActRuExecution">
+		SELECT
+		<include refid="actRuExecutionColumns"/>
+		FROM act_ru_execution a
+		<include refid="actRuExecutionJoins"/>
+		<where>
+			a.id_=#{id} and a.super_exec_ is null
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	<select id="findChildByExecutionID" resultType="ActRuExecution">
+		SELECT
+		<include refid="actRuExecutionColumns"/>
+		FROM act_ru_execution b join act_ru_execution a on b.id_=a.super_exec_
+		<include refid="actRuExecutionJoins"/>
+		<where>
+			b.PROC_INST_ID_=#{id};
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	<select id="findAllExecutions" resultType="ActRuExecution">
+		SELECT
+		<include refid="actRuExecutionColumns"/>
+		FROM act_ru_execution a
+		<include refid="actRuExecutionJoins"/>
+		<where>
+			a.PROC_INST_ID_=#{id};
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	<select id="findList" resultType="ActRuExecution">
+		SELECT 
+			<include refid="actRuExecutionColumns"/>
+		FROM act_ru_execution a
+		<include refid="actRuExecutionJoins"/>
+		<where>
+			<if test="procInstId != null">
+				a.proc_inst_id_=#{procInstId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ActRuExecution">
+		SELECT 
+			<include refid="actRuExecutionColumns"/>
+		FROM act_ru_execution a
+		<include refid="actRuExecutionJoins"/>
+		<where>
+			<if test="procInstId != null">
+				a.proc_inst_id_=#{procInstId}
+			</if>
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO act_ru_execution(
+			id_,
+			rev_,
+			proc_inst_id_,
+			business_key_,
+			parent_id_,
+			proc_def_id_,
+			super_exec_,
+			act_id_,
+			is_active_,
+			is_concurrent_,
+			is_scope_,
+			is_event_scope_,
+			suspension_state_,
+			cached_ent_state_,
+			tenant_id_,
+			name_,
+			lock_time_
+		) VALUES (
+			#{id},
+			#{rev},
+			#{procInstId},
+			#{businessKey},
+			#{parentId},
+			#{procDefId},
+			#{superExec},
+			#{actId},
+			#{isActive},
+			#{isConcurrent},
+			#{isScope},
+			#{isEventScope},
+			#{suspensionState},
+			#{cachedEntState},
+			#{tenantId},
+			#{name},
+			#{lockTime}
+		)
+	</insert>
+	<insert id="saveBatch">
+		set FOREIGN_KEY_CHECKS=0;
+		INSERT INTO act_ru_execution(
+		id_,
+		rev_,
+		proc_inst_id_,
+		business_key_,
+		parent_id_,
+		proc_def_id_,
+		super_exec_,
+		act_id_,
+		is_active_,
+		is_concurrent_,
+		is_scope_,
+		is_event_scope_,
+		suspension_state_,
+		cached_ent_state_,
+		tenant_id_,
+		name_,
+		lock_time_
+		) VALUES
+		<foreach item="item" index="index" collection="list" separator=",">
+		 (
+		#{item.id},
+		#{item.rev},
+		#{item.procInstId},
+		#{item.businessKey},
+		#{item.parentId},
+		#{item.procDefId},
+		#{item.superExec},
+		#{item.actId},
+		#{item.isActive},
+		#{item.isConcurrent},
+		#{item.isScope},
+		#{item.isEventScope},
+		#{item.suspensionState},
+		#{item.cachedEntState},
+		#{item.tenantId},
+		#{item.name},
+		#{item.lockTime}
+		)
+		</foreach>;
+		set FOREIGN_KEY_CHECKS=1;
+	</insert>
+	<update id="update">
+		UPDATE act_ru_execution SET 	
+			id_ = #{id},
+			rev_ = #{rev},
+			proc_inst_id_ = #{procInstId},
+			business_key_ = #{businessKey},
+			parent_id_ = #{parentId},
+			proc_def_id_ = #{procDefId},
+			super_exec_ = #{superExec},
+			act_id_ = #{actId},
+			is_active_ = #{isActive},
+			is_concurrent_ = #{isConcurrent},
+			is_scope_ = #{isScope},
+			is_event_scope_ = #{isEventScope},
+			suspension_state_ = #{suspensionState},
+			cached_ent_state_ = #{cachedEntState},
+			tenant_id_ = #{tenantId},
+			name_ = #{name},
+			lock_time_ = #{lockTime}
+		WHERE id_ = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM act_ru_execution
+		WHERE id_ = #{id}
+	</update>
+	
+</mapper>

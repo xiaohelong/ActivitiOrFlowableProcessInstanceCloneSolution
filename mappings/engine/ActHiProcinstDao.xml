@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.act.dao.engine.ActHiProcinstDao">
+    
+	<sql id="actHiProcinstColumns">
+		a.id_ AS "id",
+		a.proc_inst_id_ AS "procInstId",
+		a.business_key_ AS "businessKey",
+		a.proc_def_id_ AS "procDefId",
+		a.start_time_ AS "startTime",
+		a.end_time_ AS "endTime",
+		a.duration_ AS "duration",
+		a.start_user_id_ AS "startUserId",
+		a.start_act_id_ AS "startActId",
+		a.end_act_id_ AS "endActId",
+		a.super_process_instance_id_ AS "superProcessInstanceId",
+		a.delete_reason_ AS "deleteReason",
+		a.tenant_id_ AS "tenantId",
+		a.name_ AS "name"
+	</sql>
+	
+	<sql id="actHiProcinstJoins">
+	</sql>
+    
+	<select id="get" resultType="ActHiProcinst">
+		SELECT 
+			<include refid="actHiProcinstColumns"/>
+		FROM act_hi_procinst a
+		<include refid="actHiProcinstJoins"/>
+		WHERE a.id_ = #{id}
+	</select>
+	<select id="findChildActHiProcinst" resultType="ActHiProcinst">
+		SELECT
+		<include refid="actHiProcinstColumns"/>
+		FROM act_hi_procinst a
+		<include refid="actHiProcinstJoins"/>
+		<where>
+			a.SUPER_PROCESS_INSTANCE_ID_=#{superProcessInstanceId}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	<select id="findList" resultType="ActHiProcinst">
+		SELECT 
+			<include refid="actHiProcinstColumns"/>
+		FROM act_hi_procinst a
+		<include refid="actHiProcinstJoins"/>
+		<where>
+			<if test="procInstId != null">
+				a.proc_inst_id_=#{procInstId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ActHiProcinst">
+		SELECT 
+			<include refid="actHiProcinstColumns"/>
+		FROM act_hi_procinst a
+		<include refid="actHiProcinstJoins"/>
+		<where>
+			<if test="procInstId != null">
+				a.proc_inst_id_=#{procInstId}
+			</if>
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO act_hi_procinst(
+			id_,
+			proc_inst_id_,
+			business_key_,
+			proc_def_id_,
+			start_time_,
+			end_time_,
+			duration_,
+			start_user_id_,
+			start_act_id_,
+			end_act_id_,
+			super_process_instance_id_,
+			delete_reason_,
+			tenant_id_,
+			name_
+		) VALUES (
+			#{id},
+			#{procInstId},
+			#{businessKey},
+			#{procDefId},
+			#{startTime},
+			#{endTime},
+			#{duration},
+			#{startUserId},
+			#{startActId},
+			#{endActId},
+			#{superProcessInstanceId},
+			#{deleteReason},
+			#{tenantId},
+			#{name}
+		)
+	</insert>
+	<insert id="saveBatch">
+		INSERT INTO act_hi_procinst(
+		id_,
+		proc_inst_id_,
+		business_key_,
+		proc_def_id_,
+		start_time_,
+		end_time_,
+		duration_,
+		start_user_id_,
+		start_act_id_,
+		end_act_id_,
+		super_process_instance_id_,
+		delete_reason_,
+		tenant_id_,
+		name_
+		) VALUES
+		<foreach item="item" index="index" collection="list" separator=",">
+		 (
+		#{item.id},
+		#{item.procInstId},
+		#{item.businessKey},
+		#{item.procDefId},
+		#{item.startTime},
+		#{item.endTime},
+		#{item.duration},
+		#{item.startUserId},
+		#{item.startActId},
+		#{item.endActId},
+		#{item.superProcessInstanceId},
+		#{item.deleteReason},
+		#{item.tenantId},
+		#{item.name}
+		)
+		</foreach>
+	</insert>
+	<update id="update">
+		UPDATE act_hi_procinst SET 	
+			id_ = #{id},
+			proc_inst_id_ = #{procInstId},
+			business_key_ = #{businessKey},
+			proc_def_id_ = #{procDefId},
+			start_time_ = #{startTime},
+			end_time_ = #{endTime},
+			duration_ = #{duration},
+			start_user_id_ = #{startUserId},
+			start_act_id_ = #{startActId},
+			end_act_id_ = #{endActId},
+			super_process_instance_id_ = #{superProcessInstanceId},
+			delete_reason_ = #{deleteReason},
+			tenant_id_ = #{tenantId},
+			name_ = #{name}
+		WHERE id_ = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM act_hi_procinst
+		WHERE id_ = #{id}
+	</update>
+	
+</mapper>

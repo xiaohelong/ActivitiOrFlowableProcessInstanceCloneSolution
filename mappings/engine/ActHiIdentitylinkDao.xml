@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.act.dao.engine.ActHiIdentitylinkDao">
+    
+	<sql id="actHiIdentitylinkColumns">
+		a.id_ AS "id",
+		a.group_id_ AS "groupId",
+		a.type_ AS "type",
+		a.user_id_ AS "user.id",
+		a.task_id_ AS "taskId",
+		a.proc_inst_id_ AS "procInstId",
+		u4.name AS "user.name"
+	</sql>
+	
+	<sql id="actHiIdentitylinkJoins">
+		LEFT JOIN sys_user u4 ON u4.id = a.user_id_
+	</sql>
+    
+	<select id="get" resultType="ActHiIdentitylink">
+		SELECT 
+			<include refid="actHiIdentitylinkColumns"/>
+		FROM act_hi_identitylink a
+		<include refid="actHiIdentitylinkJoins"/>
+		WHERE a.id_ = #{id}
+	</select>
+	<select id="findAllIdentitylinkByProcInstId" resultType="ActHiIdentitylink">
+		SELECT
+		<include refid="actHiIdentitylinkColumns"/>
+		FROM act_hi_identitylink a
+		<include refid="actHiIdentitylinkJoins"/>
+		join act_hi_taskinst t on a.task_id_=t.id_
+		<where>
+			<if test="procInstId != null">
+				t.proc_inst_id_=#{procInstId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	<select id="findList" resultType="ActHiIdentitylink">
+		SELECT 
+			<include refid="actHiIdentitylinkColumns"/>
+		FROM act_hi_identitylink a
+		<include refid="actHiIdentitylinkJoins"/>
+		<where>
+			<if test="procInstId != null">
+				a.proc_inst_id_=#{procInstId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ActHiIdentitylink">
+		SELECT 
+			<include refid="actHiIdentitylinkColumns"/>
+		FROM act_hi_identitylink a
+		<include refid="actHiIdentitylinkJoins"/>
+		<where>
+			<if test="procInstId != null">
+				a.proc_inst_id_=#{procInstId}
+			</if>
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO act_hi_identitylink(
+			id_,
+			group_id_,
+			type_,
+			user_id_,
+			task_id_,
+			proc_inst_id_
+		) VALUES (
+			#{id},
+			#{groupId},
+			#{type},
+			#{user.id},
+			#{taskId},
+			#{procInstId}
+		)
+	</insert>
+	<insert id="saveBatch">
+		INSERT INTO act_hi_identitylink(
+		id_,
+		group_id_,
+		type_,
+		user_id_,
+		task_id_,
+		proc_inst_id_
+		) VALUES
+		<foreach item="item" index="index" collection="list" separator=",">
+		(
+		#{item.id},
+		#{item.groupId},
+		#{item.type},
+		#{item.user.id},
+		#{item.taskId},
+		#{item.procInstId}
+		)
+		</foreach>
+	</insert>
+	<update id="update">
+		UPDATE act_hi_identitylink SET 	
+			id_ = #{id},
+			group_id_ = #{groupId},
+			type_ = #{type},
+			user_id_ = #{user.id},
+			task_id_ = #{taskId},
+			proc_inst_id_ = #{procInstId}
+		WHERE id_ = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM act_hi_identitylink
+		WHERE id_ = #{id}
+	</update>
+	
+</mapper>

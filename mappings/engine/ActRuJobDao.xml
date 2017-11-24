@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.act.dao.engine.ActRuJobDao">
+    
+	<sql id="actRuJobColumns">
+		a.id_ AS "id",
+		a.rev_ AS "rev",
+		a.type_ AS "type",
+		a.lock_exp_time_ AS "lockExpTime",
+		a.lock_owner_ AS "lockOwner",
+		a.exclusive_ AS "exclusive",
+		a.execution_id_ AS "executionId",
+		a.process_instance_id_ AS "processInstanceId",
+		a.proc_def_id_ AS "procDefId",
+		a.retries_ AS "retries",
+		a.exception_stack_id_ AS "exceptionStackId",
+		a.exception_msg_ AS "exceptionMsg",
+		a.duedate_ AS "duedate",
+		a.repeat_ AS "repeat",
+		a.handler_type_ AS "handlerType",
+		a.handler_cfg_ AS "handlerCfg",
+		a.tenant_id_ AS "tenantId"
+	</sql>
+	
+	<sql id="actRuJobJoins">
+	</sql>
+    
+	<select id="get" resultType="ActRuJob">
+		SELECT 
+			<include refid="actRuJobColumns"/>
+		FROM act_ru_job a
+		<include refid="actRuJobJoins"/>
+		WHERE a.id_ = #{id}
+	</select>
+	
+	<select id="findList" resultType="ActRuJob">
+		SELECT 
+			<include refid="actRuJobColumns"/>
+		FROM act_ru_job a
+		<include refid="actRuJobJoins"/>
+		<where>
+			<if test="processInstanceId != null">
+				a.process_instance_id_=#{processInstanceId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ActRuJob">
+		SELECT 
+			<include refid="actRuJobColumns"/>
+		FROM act_ru_job a
+		<include refid="actRuJobJoins"/>
+		<where>
+			<if test="processInstanceId != null">
+				a.process_instance_id_=#{processInstanceId}
+			</if>
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO act_ru_job(
+			id_,
+			rev_,
+			type_,
+			lock_exp_time_,
+			lock_owner_,
+			exclusive_,
+			execution_id_,
+			process_instance_id_,
+			proc_def_id_,
+			retries_,
+			exception_stack_id_,
+			exception_msg_,
+			duedate_,
+			repeat_,
+			handler_type_,
+			handler_cfg_,
+			tenant_id_
+		) VALUES (
+			#{id},
+			#{rev},
+			#{type},
+			#{lockExpTime},
+			#{lockOwner},
+			#{exclusive},
+			#{executionId},
+			#{processInstanceId},
+			#{procDefId},
+			#{retries},
+			#{exceptionStackId},
+			#{exceptionMsg},
+			#{duedate},
+			#{repeat},
+			#{handlerType},
+			#{handlerCfg},
+			#{tenantId}
+		)
+	</insert>
+	<insert id="saveBatch">
+		set FOREIGN_KEY_CHECKS=0;
+		INSERT INTO act_ru_job(
+		id_,
+		rev_,
+		type_,
+		lock_exp_time_,
+		lock_owner_,
+		exclusive_,
+		execution_id_,
+		process_instance_id_,
+		proc_def_id_,
+		retries_,
+		exception_stack_id_,
+		exception_msg_,
+		duedate_,
+		repeat_,
+		handler_type_,
+		handler_cfg_,
+		tenant_id_
+		) VALUES
+		<foreach item="item" index="index" collection="list" separator=",">
+		 (
+			#{item.id},
+			#{item.rev},
+			#{item.type},
+			#{item.lockExpTime},
+			#{item.lockOwner},
+			#{item.exclusive},
+			#{item.executionId},
+			#{item.processInstanceId},
+			#{item.procDefId},
+			#{item.retries},
+			#{item.exceptionStackId},
+			#{item.exceptionMsg},
+			#{item.duedate},
+			#{item.repeat},
+			#{item.handlerType},
+			#{item.handlerCfg},
+			#{item.tenantId}
+		)
+		</foreach>;
+		set FOREIGN_KEY_CHECKS=1;
+	</insert>
+	<update id="update">
+		UPDATE act_ru_job SET 	
+			id_ = #{id},
+			rev_ = #{rev},
+			type_ = #{type},
+			lock_exp_time_ = #{lockExpTime},
+			lock_owner_ = #{lockOwner},
+			exclusive_ = #{exclusive},
+			execution_id_ = #{executionId},
+			process_instance_id_ = #{processInstanceId},
+			proc_def_id_ = #{procDefId},
+			retries_ = #{retries},
+			exception_stack_id_ = #{exceptionStackId},
+			exception_msg_ = #{exceptionMsg},
+			duedate_ = #{duedate},
+			repeat_ = #{repeat},
+			handler_type_ = #{handlerType},
+			handler_cfg_ = #{handlerCfg},
+			tenant_id_ = #{tenantId}
+		WHERE id_ = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM act_ru_job
+		WHERE id_ = #{id}
+	</update>
+	
+</mapper>

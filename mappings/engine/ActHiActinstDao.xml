@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.act.dao.engine.ActHiActinstDao">
+    
+	<sql id="actHiActinstColumns">
+		a.id_ AS "id",
+		a.proc_def_id_ AS "procDefId",
+		a.proc_inst_id_ AS "procInstId",
+		a.execution_id_ AS "executionId",
+		a.act_id_ AS "actId",
+		a.task_id_ AS "taskId",
+		a.call_proc_inst_id_ AS "callProcInstId",
+		a.act_name_ AS "actName",
+		a.act_type_ AS "actType",
+		a.assignee_ AS "assignee",
+		a.start_time_ AS "startTime",
+		a.end_time_ AS "endTime",
+		a.duration_ AS "duration",
+		a.tenant_id_ AS "tenantId"
+	</sql>
+	
+	<sql id="actHiActinstJoins">
+	</sql>
+    
+	<select id="get" resultType="ActHiActinst">
+		SELECT 
+			<include refid="actHiActinstColumns"/>
+		FROM act_hi_actinst a
+		<include refid="actHiActinstJoins"/>
+		WHERE a.id_ = #{id}
+	</select>
+	
+	<select id="findList" resultType="ActHiActinst">
+		SELECT 
+			<include refid="actHiActinstColumns"/>
+		FROM act_hi_actinst a
+		<include refid="actHiActinstJoins"/>
+		<where>
+			<if test="procInstId != null">
+				a.proc_inst_id_=#{procInstId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ActHiActinst">
+		SELECT 
+			<include refid="actHiActinstColumns"/>
+		FROM act_hi_actinst a
+		<include refid="actHiActinstJoins"/>
+		<where>
+			<if test="procInstId != null">
+				a.proc_inst_id_=#{procInstId}
+			</if>
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO act_hi_actinst(
+			id_,
+			proc_def_id_,
+			proc_inst_id_,
+			execution_id_,
+			act_id_,
+			task_id_,
+			call_proc_inst_id_,
+			act_name_,
+			act_type_,
+			assignee_,
+			start_time_,
+			end_time_,
+			duration_,
+			tenant_id_
+		) VALUES (
+			#{id},
+			#{procDefId},
+			#{procInstId},
+			#{executionId},
+			#{actId},
+			#{taskId},
+			#{callProcInstId},
+			#{actName},
+			#{actType},
+			#{assignee},
+			#{startTime},
+			#{endTime},
+			#{duration},
+			#{tenantId}
+		)
+	</insert>
+	<insert id="saveBatch">
+		INSERT INTO act_hi_actinst(
+			id_,
+			proc_def_id_,
+			proc_inst_id_,
+			execution_id_,
+			act_id_,
+			task_id_,
+			call_proc_inst_id_,
+			act_name_,
+			act_type_,
+			assignee_,
+			start_time_,
+			end_time_,
+			duration_,
+			tenant_id_
+		) VALUES
+		<foreach item="item" index="index" collection="list" separator=",">
+		(
+			#{item.id},
+			#{item.procDefId},
+			#{item.procInstId},
+			#{item.executionId},
+			#{item.actId},
+			#{item.taskId},
+			#{item.callProcInstId},
+			#{item.actName},
+			#{item.actType},
+			#{item.assignee},
+			#{item.startTime},
+			#{item.endTime},
+			#{item.duration},
+			#{item.tenantId}
+		)
+		</foreach>
+	</insert>
+	<update id="update">
+		UPDATE act_hi_actinst SET 	
+			id_ = #{id},
+			proc_def_id_ = #{procDefId},
+			proc_inst_id_ = #{procInstId},
+			execution_id_ = #{executionId},
+			act_id_ = #{actId},
+			task_id_ = #{taskId},
+			call_proc_inst_id_ = #{callProcInstId},
+			act_name_ = #{actName},
+			act_type_ = #{actType},
+			assignee_ = #{assignee},
+			start_time_ = #{startTime},
+			end_time_ = #{endTime},
+			duration_ = #{duration},
+			tenant_id_ = #{tenantId}
+		WHERE id_ = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM act_hi_actinst
+		WHERE id_ = #{id}
+	</update>
+	
+</mapper>
