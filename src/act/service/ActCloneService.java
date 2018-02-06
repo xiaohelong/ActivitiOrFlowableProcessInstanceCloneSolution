@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.act.service;
+package act.service;
 
 import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.thinkgem.jeesite.common.service.BaseService;
@@ -47,9 +47,6 @@ import java.util.*;
  *
  * @author xiaohelong
  * @version 2017-11-07
- *  * email:xiaohelong2005@126.com
- *       xiaohelong2005@gmail.com
- *       twitter.com/xiaohelong
  */
 @Service
 @Transactional(readOnly = true)
@@ -84,7 +81,8 @@ public class ActCloneService extends BaseService {
     private ActRuTaskService actRuTaskService;
     @Autowired
     private ActRuVariableService actRuVariableService;
-
+    @Autowired
+    private ActGeBytearrayService actGeBytearrayService;
     /**
      * idSet
      * id集合，旧ID为Key,新ID为Value,每得到一个不同的老KD，
@@ -137,6 +135,16 @@ public class ActCloneService extends BaseService {
 
     /**
      * 核心思路：将此流程实例相关的的所有信息进行收集，再利用全文替换的思想，将相关联的ID号统一替换成新的ID号，这样就可以保证复制的流程关系一模一样。
+     * 要保存记录成功，必须要移除掉所有的外键(主要是act_ru_)
+     * 具体步骤如下：
+     * //step1 begin:get all record
+     * //step1 end:get all record
+     * //step2 begin:read all data id to a set(some fields just like proc_def_id_ need to be excluded
+     * //step2 end:read all data id to a set(some fields just like proc_def_id_ need to be excluded
+     * //step3 begin:set all got data to isnewrecord and replace old id with it's related new id
+     * //step3 end:set all got data to isnewrecord and replace old id with it's related new id
+     * //step4 begin:save to database,and return
+     * //step4 end:save to database,and return
      * 这里主要全文替换是ID，且是几个特有的字段。
      *
      * @param procInstanceID 需要克隆的实例流程
@@ -201,7 +209,8 @@ public class ActCloneService extends BaseService {
             actHiDetailService.saveBatch(actHiDetails);
         }
         //5. act_hi_identitylink table
-        //身份关链表（有为空的，也有不为空的，需要进行特殊处理即找出所有流程相关的任务或者流程本身）
+        //身份关链表（有为空的，也有不为空的，需要进行特殊处理即找出所有流程相关的任务或者流程本身再去重）
+        //可以先通过taskinst找到所有任务，再进行直接通过ProcInstId找出的记录，去重即可。
         ActHiIdentitylink actHiIdentitylinkFindEntity = new ActHiIdentitylink();
         actHiIdentitylinkFindEntity.setProcInstId(procInstanceID);
         List<ActHiIdentitylink> actHiIdentitylinks = actHiIdentitylinkService.findAllIdentitylinkByProcInstId(actHiIdentitylinkFindEntity);
@@ -258,8 +267,8 @@ public class ActCloneService extends BaseService {
             actRuExecutionActIdReplace.replaceCollection(actRuExecutions,subIdSet,excludeFieldsSet);//传过去的值按java的引用传递规则会对应更改并返回
             actRuExecutionService.saveBatch(actRuExecutions);
         }
-        //身份关链表（有为空的，也有不为空的，需要进行特殊处理即找出所有流程相关的任务或者流程本身再去重）
 
+        //身份关链表（有为空的，也有不为空的，需要进行特殊处理即找出所有流程相关的任务或者流程本身再去重）
         //3.act_ru_identityservice table
         ActRuIdentitylink actRuIdentitylinkFindEntity = new ActRuIdentitylink();
         actRuIdentitylinkFindEntity.setProcInstId(procInstanceID);
@@ -301,6 +310,15 @@ public class ActCloneService extends BaseService {
             actRuVariableActIdReplace.replaceCollection(actRuVariables, subIdSet, excludeFieldsSet);//传过去的值按java的引用传递规则会对应更改并返回
             actRuVariableService.saveBatch(actRuVariables);
         }
+
+        //7.act_ge_bytearray table ru hi variable related table
+        List<ActGeBytearray> actGeBytearrays=actGeBytearrayService.findProcRelatedRecord(needCloneProc);
+        if(actGeBytearrays!=null&&actGeBytearrays.size()>0){
+            ActIdReplace<ActGeBytearray> actGeBytearrayActIdReplace = new ActIdReplace<ActGeBytearray>(ActGeBytearray.class);
+            actGeBytearrayActIdReplace.replaceCollection(actGeBytearrays, subIdSet, excludeFieldsSet);//传过去的值按java的引用传递规则会对应更改并返回
+            actGeBytearrayService.saveBatch(actGeBytearrays);
+        }
+
         //对于正在执行的也会在hi_proc_inst中有记录，因此只要从hi_proc_inst中获取到子流程ID即可进行递归处理。
         ActHiProcinst findChildProc=new ActHiProcinst();
         findChildProc.setSuperProcessInstanceId(procInstanceID);
@@ -312,9 +330,9 @@ public class ActCloneService extends BaseService {
                 cloneProcInsByIDOnlyOneCopy(childProcess.getId(),subIdSet.get(procInstanceID));//子递归时，需要将新的父ID传入,不需要保存该返回值，因为直接存入了数据库，只需要在顶级获取即可
             }
         }
+
         ActHiProcinst newCloneProc=null;
         try {
-
             newCloneProc=(ActHiProcinst) BeanUtils.cloneBean(needCloneProc);
             newCloneProc.setId(subIdSet.get(procInstanceID));//返回新的ID值
             newCloneProc.setProcInstId(subIdSet.get(procInstanceID));//返回新的ID值实例
@@ -336,8 +354,8 @@ public class ActCloneService extends BaseService {
     private void initData(String procInstId) {
         Map<String,String> subIdSet=new HashMap<String, String>();
         idSet.put(procInstId,subIdSet);
+        //todo这里有问题
         subIdSet.put(procInstId,IdGen.uuid());//initialize
         excludeFieldsSet.add("getProcDefId");
-        excludeFieldsSet.add("getBytearrayId");
     }
 }

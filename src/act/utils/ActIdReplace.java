@@ -1,4 +1,4 @@
-package com.thinkgem.jeesite.modules.act.utils;
+package act.utils;
 
 import com.thinkgem.jeesite.common.persistence.DataEntity;
 import com.thinkgem.jeesite.common.utils.IdGen;
@@ -16,9 +16,6 @@ import java.util.Set;
 /**
  * 针对act需要克隆的类别，做一个模板通用工具，免得每一个都要写一次
  * Created by xiaohelong on 2017/11/11.
- *  * email:xiaohelong2005@126.com
- *       xiaohelong2005@gmail.com
- *       twitter.com/xiaohelong
  */
 public class ActIdReplace<T extends DataEntity<T>> {
     protected Logger logger = LoggerFactory.getLogger(getClass());
